@@ -1,0 +1,96 @@
+---
+import site from '../data/site.json';
+import { externalLink, type Locale } from '../lib/site';
+import { getRecommendationVideos } from '../lib/youtube';
+import Icon from './Icon.astro';
+import VideoLink from './VideoLink.astro';
+
+interface Props {
+  locale: Locale;
+  source?: 'recent' | 'testimonials';
+  thumbnailSizes?: string;
+}
+
+const {
+  locale,
+  source = 'recent',
+  thumbnailSizes = '(min-width: 90rem) 340px, (min-width: 74rem) 24vw, (min-width: 42rem) 29vw, 92vw',
+} = Astro.props;
+const copy = site.copy[locale];
+const videos = source === 'testimonials' ? site.testimonials : await getRecommendationVideos();
+const channelUrl = `https://www.youtube.com/channel/${site.youtubeChannelId}`;
+---
+<aside id="stories" class="recommendations min-w-0" aria-labelledby="stories-title" data-recommendation-videos>
+  <h2 id="stories-title" class="video-heading text-[clamp(1.1rem,0.88rem+0.6vi,1.42rem)] leading-[1.2] font-extrabold tracking-[-0.025em]">{copy.testimonialsTitle}</h2>
+  <div class="video-content @container">
+    <ul class="video-list grid gap-[0.9rem] @min-[38rem]:grid-cols-3 [&>li]:min-w-0" role="list">
+      {videos.map((video) => (
+        <li>
+          <VideoLink {...video} watchLabel={copy.watchVideo} playLabel={copy.playVideo} sizes={thumbnailSizes} />
+        </li>
+      ))}
+    </ul>
+    <a class="action channel-link mt-[0.9rem] w-full bg-youtube text-[1.1875rem] font-extrabold text-white hover:bg-youtube-hover" href={channelUrl} {...externalLink}>
+      <Icon name="youtube" size={21} />{copy.viewChannel}
+    </a>
+  </div>
+
+  <dialog aria-labelledby="video-player-title" closedby="any"
+    class="player-dialog fixed inset-0 m-auto max-h-[calc(100dvb-1.5rem)] w-[calc(100%-1.5rem)] max-w-[54rem] overflow-auto
+      rounded-[0.8rem] border border-moss bg-deep text-paper backdrop:overflow-hidden backdrop:overscroll-contain
+      backdrop:bg-[#131810d9] [&:modal]:overscroll-contain">
+    <header class="player-header flex items-center justify-between gap-2 py-[0.55rem] ps-4 pe-3">
+      <h3 id="video-player-title" data-player-title class="leading-tight font-[750] wrap-anywhere"></h3>
+      <form method="dialog">
+        <button type="submit" class="player-close grid size-11 cursor-pointer place-items-center rounded-[0.4rem] text-paper hover:bg-forest" aria-label={copy.closeVideo} autofocus>
+          <Icon name="close" size={21} />
+        </button>
+      </form>
+    </header>
+    <div class="player-frame aspect-video min-h-[200px] bg-black [&>iframe]:block [&>iframe]:size-full [&>iframe]:border-0" data-player-frame></div>
+    <a class="text-link player-link mx-4 text-[0.85rem] text-lime" data-player-link {...externalLink}><Icon name="external" size={16} />{copy.watchVideo}</a>
+  </dialog>
+</aside>
+
+<script>
+  for (const aside of document.querySelectorAll('[data-recommendation-videos]')) {
+    const dialog = aside.querySelector('dialog');
+    const frame = aside.querySelector('[data-player-frame]');
+    const title = aside.querySelector('[data-player-title]');
+    const youtubeLink = aside.querySelector<HTMLAnchorElement>('[data-player-link]');
+    if (!dialog || typeof dialog.showModal !== 'function' || !frame || !title || !youtubeLink) continue;
+
+    for (const button of aside.querySelectorAll<HTMLButtonElement>('button[data-video-id]')) {
+      button.hidden = false;
+      button.parentElement?.setAttribute('data-player-ready', '');
+    }
+
+    aside.addEventListener('click', (event) => {
+      if (!(event instanceof MouseEvent) || event.defaultPrevented ||
+        event.button !== 0 || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey ||
+        !(event.target instanceof Element)) return;
+
+      const button = event.target.closest<HTMLButtonElement>('button[data-video-id]');
+      const link = button?.parentElement?.querySelector<HTMLAnchorElement>('a[data-video-link]');
+      const id = button?.dataset.videoId;
+      if (!link || !id || !/^[\w-]{11}$/.test(id)) return;
+
+      const videoTitle = link.querySelector('[data-video-title]')?.textContent?.trim() || 'YouTube';
+      const autoplay = matchMedia('(prefers-reduced-motion: reduce)').matches ? '0' : '1';
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=${autoplay}&playsinline=1&rel=0`;
+      iframe.title = videoTitle;
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+
+      title.textContent = videoTitle;
+      youtubeLink.href = link.href;
+      dialog.showModal();
+      frame.replaceChildren(iframe);
+      event.preventDefault();
+    });
+
+    dialog.addEventListener('close', () => frame.replaceChildren());
+  }
+</script>

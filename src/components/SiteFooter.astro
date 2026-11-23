@@ -1,0 +1,114 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import site from '../data/site.json';
+import { externalLink, homePath, type Locale } from '../lib/site';
+import Icon from './Icon.astro';
+import VideoLink from './VideoLink.astro';
+
+interface Props {
+  locale: Locale;
+  showAwards?: boolean;
+}
+
+const { locale, showAwards = false } = Astro.props;
+const copy = site.copy[locale];
+const logos = import.meta.glob<ImageMetadata>('../assets/certificaciones/*.webp', { eager: true, import: 'default' });
+const badges = import.meta.glob<string>('../assets/tripadvisor/*.svg', { eager: true, query: '?url', import: 'default' });
+const awardGroups = [
+  { id: 'award-excellence', title: copy.awardExcellence, years: site.awards.excellence },
+  { id: 'award-travelers-choice', title: copy.awardTravelersChoice, years: site.awards.travelersChoice },
+];
+const year = new Date().getFullYear();
+---
+<footer>
+  {showAwards && (
+    <div class="trust-band border-t border-line bg-[#f7f8ef]">
+      <div class="shell trust pt-[clamp(2.4rem,3.1vi,3rem)] pb-[clamp(2.75rem,4.5vi,4.25rem)] text-center
+        [--trust-columns:7] [--trust-gap:clamp(0.75rem,2.7vi,2.5rem)] max-[62rem]:[--trust-columns:4] max-[42rem]:[--trust-columns:3]">
+        <section aria-labelledby="memberships-title">
+          <h2 id="memberships-title" class="text-[clamp(0.9rem,0.77rem+0.4vi,1.06rem)] trust-label leading-[1.35] font-[750] tracking-[0.085em] text-[#666a62] uppercase">{copy.memberships}</h2>
+          <ul class="trust-row memberships mt-[clamp(1.4rem,2.9vi,2.5rem)] max-[24rem]:[--trust-columns:2]" role="list">
+            {site.memberships.map(({ image, name }) => (
+              <li class="grid gap-[0.85rem] text-[0.74rem] leading-[1.35] font-medium text-muted">
+                <span class="membership-logo grid aspect-[4/3] w-full place-items-center rounded-[0.65rem] bg-white p-[0.85rem]">
+                  <Image class="h-full min-h-0 w-full object-contain" src={logos[`../assets/certificaciones/${image}.webp`]} alt="" width={220} />
+                </span>
+                <span>{name}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+        <section class="awards-section relative mt-[clamp(2.3rem,4vi,3.4rem)] pt-[clamp(1.5rem,2.2vi,1.9rem)]
+          before:absolute before:inset-x-[10%] before:top-0 before:border-t before:border-line" aria-labelledby="awards-title">
+          <h2 id="awards-title" class="text-[clamp(1.25rem,1rem+1vi,1.82rem)] leading-[1.2] font-extrabold text-forest">{site.brand} · {copy.awards}</h2>
+          {awardGroups.map(({ id, title, years }) => (
+            <div class="award-group mt-[clamp(1.6rem,3.2vi,2.8rem)]">
+              <h3 id={id} class="text-[clamp(0.78rem,0.7rem+0.3vi,0.94rem)] trust-label leading-[1.35] font-[750] tracking-[0.085em] text-[#666a62] uppercase">{title}</h3>
+              <ul class="trust-row awards mt-[clamp(0.8rem,1.65vi,1.35rem)] max-[62rem]:[--trust-columns:5] max-[42rem]:[--trust-columns:3]" role="list" aria-labelledby={id}>
+                {years.map((year) => (
+                  <li>
+                    <img
+                      class="mx-auto aspect-square h-auto w-full max-w-40 object-contain"
+                      src={badges[`../assets/tripadvisor/tripadvisor-certificate-of-excellence-${year}.svg`]}
+                      alt={`Tripadvisor ${year}`}
+                      width="160" height="160" loading="lazy" decoding="async"
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
+      </div>
+    </div>
+  )}
+
+  <div id="contact" class="footer-band bg-deep text-paper">
+    <div class="shell footer-main grid grid-cols-[repeat(auto-fit,minmax(min(100%,13.5rem),1fr))]
+      gap-x-[clamp(1.3rem,4vi,3.3rem)] gap-y-[2.4rem] py-[clamp(2.75rem,5vi,4.6rem)] [&_h2]:mb-[0.9rem] [&_h2]:text-xl">
+      <div class="footer-brand">
+        <a href={homePath(locale)}><img class="h-auto w-[6.7rem]" src="/logo-machupicchu-travel.webp" alt={site.brand} width="873" height="641" loading="lazy" /></a>
+        <p class="mt-3 max-w-[22ch] text-[0.9rem] text-[#d7dbc9]">{copy.footerDescription}</p>
+        <ul class="socials mt-4 flex gap-[0.35rem]" role="list">
+          {site.socials.map(({ url, icon, label }) => (
+            <li>
+              <a href={url} {...externalLink} aria-label={label}
+                class="grid size-11 place-items-center rounded-full border border-[#5a624a] hover:bg-[#404c2f]"><Icon name={icon as 'facebook' | 'instagram' | 'youtube'} size={18} /></a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h2>{copy.contact}</h2>
+        <address class="not-italic">
+          <ul class="footer-list space-y-[0.34rem] text-[0.83rem] text-[#d7dbc9]
+          [&_a]:underline-offset-[0.22em] [&_a:hover]:text-white [&_a:hover]:underline" role="list">
+            {site.contact.phones.map(({ label, number }) => <li><a href={`tel:${number}`}>{label}</a></li>)}
+            {site.contact.emails.map((email) => <li><a href={`mailto:${email}`}>{email}</a></li>)}
+            <li class="mt-2">{site.contact.address[0]}<br />{site.contact.address[1]}</li>
+          </ul>
+        </address>
+        <a href={site.contact.whatsapp} {...externalLink} class="text-link mt-2 text-lime"><Icon name="whatsapp" size={18} />WhatsApp</a>
+      </div>
+      <nav aria-labelledby="footer-resources">
+        <h2 id="footer-resources">{copy.resources}</h2>
+        <ul class="footer-list space-y-[0.34rem] text-[0.83rem] text-[#d7dbc9]
+          [&_a]:underline-offset-[0.22em] [&_a:hover]:text-white [&_a:hover]:underline" role="list">
+          <li><a href={`${homePath(locale)}#tours`}>{copy.tours}</a></li>
+          {site.resources.map(({ url, label }) => <li><a href={url} {...externalLink}>{label[locale]}</a></li>)}
+        </ul>
+      </nav>
+      <div>
+        <h2>{copy.quality}</h2>
+        <VideoLink {...site.qualityVideo} title={site.brand} />
+      </div>
+    </div>
+    <div class="footer-bottom border-t border-[#535b45] py-[0.9rem] text-[0.83rem] text-[#d7dbc9]">
+      <div class="shell flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
+        <small class="text-inherit">© {year} {site.brand}</small>
+        <a href={site.privacyUrl} {...externalLink} class="underline-offset-[0.22em] hover:text-white hover:underline">{copy.privacy}</a>
+      </div>
+    </div>
+  </div>
+</footer>

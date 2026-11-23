@@ -1,0 +1,182 @@
+---
+import site from '../data/site.json';
+import { hasContent, type Tour } from '../lib/strapi';
+import Blocks from './Blocks.astro';
+
+interface Props { tour: Tour }
+const { tour } = Astro.props;
+const copy = site.copy[tour.locale];
+const tariff = tour.precios?.tarifario;
+const categories = tariff?.categorias ?? [];
+const trains = tariff?.trenes ?? [];
+const showHotels = categories.some(({ hoteles }) => hasContent(hoteles));
+const rooms = [
+  { key: 'precioSimple', label: copy.single },
+  { key: 'precioDoble', label: copy.double },
+  { key: 'precioTriple', label: copy.triple },
+] as const;
+const amount = new Intl.NumberFormat(tour.locale, { style: 'currency', currency: 'USD', currencyDisplay: 'code' });
+const price = (value?: number | string | null) => (
+  value != null && String(value).trim() !== '' && Number.isFinite(Number(value))
+    ? amount.format(Number(value)).replace(/\u00a0/g, ' ')
+    : undefined
+);
+const tableStyle = 'w-full text-sm [&_:is(th,td)]:align-top [&_:is(th,td)]:px-2 [&_:is(th,td)]:py-3 min-[40rem]:[&_:is(th,td)]:px-4 [&_tbody_tr]:border-t [&_tbody_tr]:border-line';
+---
+{(showHotels || trains.length > 0) && (
+  <section aria-labelledby="rates-title">
+    <h2 id="rates-title" class="section-title">{copy.rates}</h2>
+    <div class="rates-shell overflow-auto rounded-xl border border-line" tabindex="0" role="region" aria-labelledby="rates-title">
+      {showHotels ? (
+        <table class="hotel-rates w-full text-sm" role="table" aria-labelledby="rates-title">
+          <thead role="rowgroup" class="bg-forest text-paper">
+            <tr role="row">
+              <th class="w-[17%] text-center" scope="col" role="columnheader">{copy.category}</th>
+              <th class="text-start" scope="col" role="columnheader">{copy.hotel}</th>
+              {rooms.map(({ label }) => <th class="w-[15%] text-center" scope="col" role="columnheader">{label}</th>)}
+            </tr>
+          </thead>
+          <tbody role="rowgroup">
+            {categories.map((category) => {
+              const rating = category.estrellas?.match(/^[2-5](?=\s|$)/)?.[0];
+              const superior = category.estrellas?.includes('superior');
+              return (
+                <tr role="row">
+                  <th scope="row" role="rowheader" class="hotel-category text-center align-top font-normal wrap-anywhere">
+                    {rating ? (
+                      <>
+                        <span class="sr-only">{rating} {copy.stars}</span>
+                        <span aria-hidden="true" class="hotel-stars">{'★'.repeat(Number(rating))}</span>
+                        {superior && <span class="mt-1 block text-xs font-bold">{copy.superior}</span>}
+                      </>
+                    ) : category.estrellas || '—'}
+                  </th>
+                  <td class="hotel-names align-top wrap-anywhere" role="cell">
+                    {hasContent(category.hoteles) ? <Blocks blocks={category.hoteles} /> : '—'}
+                  </td>
+                  {rooms.map(({ key, label }) => {
+                    const formatted = price(category[key]);
+                    return (
+                      <td role="cell" class="hotel-price">
+                        <span class="hotel-room-label text-xs font-semibold" aria-hidden="true">{label}</span>
+                        <span class="block font-bold tabular-nums">{formatted ?? '—'}</span>
+                        {formatted && <small class="mt-1 block text-xs leading-tight">{copy.pricePerPerson}</small>}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      ) : (
+        <table class={tableStyle}>
+          <thead class="bg-forest text-paper"><tr><th scope="col" class="text-start">{copy.train}</th><th scope="col" class="w-[14%] text-end">{copy.cost}</th></tr></thead>
+          <tbody>{trains.map((train) => {
+            const formatted = price(train.costo);
+            return (
+              <tr>
+                <th scope="row" class="text-start font-normal wrap-anywhere"><Blocks blocks={train.tren} /></th>
+                <td class="text-end whitespace-nowrap">
+                  <span class="block font-bold tabular-nums">{formatted ?? '—'}</span>
+                  {formatted && <small class="mt-1 block text-xs leading-tight">{copy.pricePerPerson}</small>}
+                </td>
+              </tr>
+            );
+          })}</tbody>
+        </table>
+      )}
+    </div>
+  </section>
+)}
+
+<style>
+  .rates-shell {
+    container: rates / inline-size;
+  }
+
+  .hotel-rates th,
+  .hotel-rates td {
+    padding: 1rem 1.25rem;
+  }
+
+  .hotel-rates tbody tr {
+    border-block-start: 1px solid var(--color-line);
+  }
+
+  .hotel-stars {
+    color: #9b650c;
+    font-size: clamp(0.85rem, 4.4cqi, 1.0625rem);
+    line-height: 1;
+    letter-spacing: 0.035em;
+    white-space: nowrap;
+  }
+
+  .hotel-names {
+    border-inline-start: 1px solid var(--color-line);
+  }
+
+  .hotel-rates .hotel-price {
+    padding-inline: 0.625rem;
+    border-inline-start: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-mist) 50%, transparent);
+    text-align: center;
+    vertical-align: middle;
+    font-size: 1.125rem;
+    line-height: 1.25;
+  }
+
+  .hotel-room-label {
+    display: none;
+  }
+
+  @container rates (width < 36rem) {
+    .hotel-rates,
+    .hotel-rates tbody {
+      display: block;
+    }
+
+    .hotel-rates thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .hotel-rates tbody tr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .hotel-rates tbody tr:first-child {
+      border-block-start: 0;
+    }
+
+    .hotel-rates .hotel-category {
+      padding: 1rem 0.375rem;
+    }
+
+    .hotel-rates .hotel-names {
+      grid-column: span 2;
+      padding: 1rem 0.875rem;
+    }
+
+    .hotel-rates .hotel-price {
+      padding: 0.65rem 0.375rem 0.75rem;
+      border-block-start: 1px solid var(--color-line);
+      font-size: 1rem;
+      overflow-wrap: anywhere;
+    }
+
+    .hotel-names + .hotel-price {
+      border-inline-start: 0;
+    }
+
+    .hotel-room-label {
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+  }
+</style>

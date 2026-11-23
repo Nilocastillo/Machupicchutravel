@@ -1,0 +1,47 @@
+---
+import '@fontsource-variable/dm-sans';
+import '../styles/global.css';
+import site from '../data/site.json';
+import type { Locale } from '../lib/site';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  socialImage?: string;
+  alternatives: Partial<Record<Locale, string>>;
+  showAwards?: boolean;
+}
+
+const { locale, title, description, socialImage, alternatives, showAwards } = Astro.props;
+const canonical = Astro.site && new URL(Astro.url.pathname, Astro.site);
+const openGraphImage = socialImage && (Astro.site ? new URL(socialImage, Astro.site).href : socialImage);
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/webp" href="/logo-machupicchu-travel.webp" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content={site.brand} />
+    {openGraphImage && <meta property="og:image" content={openGraphImage} />}
+    {canonical && <link rel="canonical" href={canonical.href} />}
+    {canonical && <meta property="og:url" content={canonical.href} />}
+    {Astro.site && Object.entries(alternatives).map(([language, path]) =>
+      <link rel="alternate" hreflang={language} href={new URL(path, Astro.site).href} />
+    )}
+    {Astro.site && alternatives.en && <link rel="alternate" hreflang="x-default" href={new URL(alternatives.en, Astro.site).href} />}
+  </head>
+  <body class="min-w-0 bg-paper font-sans leading-[1.55] text-ink">
+    <a class="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-50 focus:bg-paper focus:p-3" href="#main">{site.copy[locale].skip}</a>
+    <SiteHeader {locale} {alternatives} />
+    <main id="main" tabindex="-1"><slot /></main>
+    <SiteFooter {locale} {showAwards} />
+  </body>
+</html>

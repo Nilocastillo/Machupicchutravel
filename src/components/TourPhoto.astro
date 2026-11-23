@@ -1,0 +1,33 @@
+---
+import { Image } from 'astro:assets';
+import { featured, travelImage } from '../lib/site';
+import { mediaUrls, type Tour } from '../lib/strapi';
+
+interface Props {
+  tour: Tour;
+  sizes: string;
+  priority?: boolean;
+}
+
+const { tour, sizes, priority = false } = Astro.props;
+const media = mediaUrls(tour.imagen);
+const fallback = featured.get(tour.documentId)?.image;
+const localImage = fallback ? travelImage(fallback) : undefined;
+const loading = priority ? 'eager' : 'lazy';
+const fetchpriority = priority ? 'high' : undefined;
+---
+{media ? (
+  <img
+    src={media.src}
+    srcset={media.srcset}
+    sizes={media.srcset ? sizes : undefined}
+    width={media.width}
+    height={media.height}
+    alt={media.alt ?? ''}
+    {loading}
+    {fetchpriority}
+    decoding="async"
+  />
+) : localImage && (
+  <Image src={localImage} alt="" layout="constrained" {sizes} {loading} {fetchpriority} />
+)}

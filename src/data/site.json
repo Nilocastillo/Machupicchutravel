@@ -1,0 +1,141 @@
+{
+  "brand": "Machu Picchu Travel",
+  "contact": {
+    "phones": [
+      { "label": "+51 984 630 919", "number": "+51984630919" },
+      { "label": "+51 977 777 777", "number": "+51977777777" }
+    ],
+    "emails": ["info@machupicchu.com.pe", "mapitravel@hotmail.com"],
+    "address": ["Jr. José Santos Chocano G-5, Urb. Santa Mónica", "Cusco, Perú"],
+    "whatsapp": "https://wa.me/51977777777"
+  },
+  "hero": [
+    { "image": "titicaca-panorama", "alt": { "en": "The Uros floating islands on Lake Titicaca", "es": "Islas flotantes de los Uros en el lago Titicaca", "pt": "Ilhas flutuantes dos Uros no lago Titicaca" } },
+    { "image": "machu-picchu-panorama", "alt": { "en": "The Inca citadel of Machu Picchu", "es": "Ciudadela inca de Machu Picchu", "pt": "Cidadela inca de Machu Picchu" } }
+  ],
+  "featuredTours": [
+    { "documentId": "nz2fn20t97fhdawehbcq7yoj", "image": "machu-picchu" },
+    { "documentId": "vrakz2dvqaqu754uy6kqa92a", "image": "rainbow-mountain" },
+    { "documentId": "f6uh7tk4yc1ss9kefykiyauq", "image": "machu-picchu-train" },
+    { "documentId": "ukoj1ufkf0guiw7bshi7nltr", "image": "nazca" },
+    { "documentId": "c8xcilizenymbnwp0x1ov4e0", "image": "titicaca" },
+    { "documentId": "hht3y3ms3zz960is7lo9tun5", "image": "cusco" },
+    { "documentId": "ww6nptvb4qkwhsv3k9bvt40f", "image": "mancora-route" },
+    { "documentId": "u894vw446vwower1hjqpu2f0", "image": "colca" },
+    { "documentId": "dt84l7pitczovjzn4geiveit", "image": "arequipa" }
+  ],
+  "youtubeChannelId": "UCVmp8Zbx9jJbGLRxir_LlKA",
+  "testimonials": [
+    { "id": "W63aK8QC2ts", "image": "travelers-five-days", "title": "Marta & Rodrigo" },
+    { "id": "ruMzMSsSX2g", "image": "travelers-four-days", "title": "Federico, Paula & Zihao" },
+    { "id": "MtneBBUkBfE", "image": "travelers-one-day", "title": "Paola & Luis Alfonso" }
+  ],
+  "qualityVideo": { "id": "jx9WmW8iVV4", "image": "quality-award" },
+  "memberships": [
+    { "image": "asociacion-de-agencias-de-turismo-del-cusco", "name": "Asociación de Agencias de Turismo del Cusco" },
+    { "image": "camara-de-comercio-del-cusco", "name": "Cámara de Comercio del Cusco" },
+    { "image": "marca-peru", "name": "Marca país del Perú · PROMPERÚ" },
+    { "image": "feria-internacional-de-turismo", "name": "Feria Internacional de Turismo" },
+    { "image": "camara-de-comercio-de-lima", "name": "Cámara de Comercio de Lima" },
+    { "image": "world-confederation-of-businesses", "name": "Confederación Mundial de Negocios" },
+    { "image": "camara-de-turismo", "name": "Cámara Regional de Turismo del Cusco" }
+  ],
+  "awards": {
+    "excellence": [2015, 2016, 2017, 2018, 2019],
+    "travelersChoice": [2020, 2021, 2022, 2023, 2024, 2025, 2026]
+  },
+  "socials": [
+    { "label": "Facebook", "icon": "facebook", "url": "https://www.facebook.com/ToursaMachuPicchu" },
+    { "label": "Instagram", "icon": "instagram", "url": "https://www.instagram.com/machupicchutravel/" },
+    { "label": "YouTube", "icon": "youtube", "url": "https://www.youtube.com/@machupicchutravel/videos" }
+  ],
+  "privacyUrl": "https://www.machupicchu.com.pe/privacy-policy-of-the-travel-agency-machu-picchu-travel-tours/",
+  "resources": [
+    { "url": "https://www.machupicchu.com.pe/machu-picchu-tickets/", "label": { "en": "Machu Picchu tickets", "es": "Entradas a Machu Picchu", "pt": "Ingressos para Machu Picchu" } },
+    { "url": "https://www.machupicchu.com.pe/inca-trail-to-machu-picchu/", "label": { "en": "The Inca Trail", "es": "Camino Inca", "pt": "Trilha Inca" } },
+    { "url": "https://www.machupicchu.com.pe/history-of-machu-picchu/", "label": { "en": "History of Machu Picchu", "es": "Historia de Machu Picchu", "pt": "História de Machu Picchu" } },
+    { "url": "https://www.machupicchu.com.pe/mountain-rainbow-peru/", "label": { "en": "Rainbow Mountain", "es": "Montaña de Colores", "pt": "Montanha Colorida" } },
+    { "url": "https://www.machupicchu.com.pe/visit-peru/", "label": { "en": "Visiting Peru", "es": "Visitar Perú", "pt": "Visitar o Peru" } },
+    { "url": "https://www.machupicchu.com.pe/machu-picchu-tours/", "label": { "en": "Guide to Machu Picchu", "es": "Guía de Machu Picchu", "pt": "Guia de Machu Picchu" } }
+  ],
+  "copy": {
+    "en": {
+      "language": "English", "languageSelector": "Choose a language", "navigation": "Main navigation", "skip": "Skip to content",
+      "reservations": "24-hour reservations", "chat": "Let’s talk", "home": "Home", "tours": "Peru tours", "stories": "Traveler stories", "contact": "Contact",
+      "metaDescription": "Explore Machu Picchu, Cusco and Peru with a local travel agency. Discover multi-day trips, Machu Picchu tours and itineraries across Peru.",
+      "heroGallery": "Destinations in Peru",
+      "previousPhoto": "Previous photo",
+      "nextPhoto": "Next photo",
+      "homeTitle": "Machu Picchu Travel Tours Agency packages tickets Peru Inca Trail Cusco 2026- 2027",
+      "homeDescription": {
+        "lead": "Tours to Machu Picchu Peru,",
+        "body": "Tour packages from 1 to 30 days, visit the best destinations. See thousands of",
+        "reviews": "Machu Picchu Travel opinions",
+        "closing": ". We have served more than 100,000 tourists. We have availability of tickets or income to do the tour to Machu Picchu for February and the whole year 2026"
+      },
+      "tourTitle": "Top Tours - Tourist packages to Peru",
+      "moreTours": "See all tours", "tourUnavailable": "Tours are temporarily unavailable. Contact us for itineraries and availability.", "tourEmpty": "Tours will appear here as they are published.",
+      "testimonialsTitle": "Testimony of our passengers", "viewChannel": "View channel", "closeVideo": "Close video", "watchVideo": "Watch on YouTube", "playVideo": "Play video",
+      "viewTour": "View tour",
+      "memberships": "Our associations and partners", "awards": "Tripadvisor awards",
+      "awardExcellence": "Certificate of Excellence · Five consecutive years", "awardTravelersChoice": "Travelers’ Choice · 2020–2026", "quality": "Quality award",
+      "footerDescription": "A local travel agency based in Cusco, Peru.", "resources": "Explore Peru", "privacy": "Privacy policy",
+      "back": "Back to tours", "catalogTitle": "2026 Tours", "overview": "Overview", "itinerary": "Itinerary", "includes": "What’s included", "excludes": "What’s not included",
+      "rates": "Tour rates", "pricePerPerson": "Price per person", "hotel": "Hotels", "category": "Category", "single": "Single", "double": "Double", "triple": "Triple", "train": "Train", "cost": "Cost",
+      "stars": "stars", "superior": "superior", "arrival": "Arrival information", "requirements": "Booking requirements", "ask": "Ask about this tour",
+      "contactTour": "Book or ask a question", "bookingMessage": "Hello, I’d like to ask about this tour:", "unavailableLanguage": "See tours in this language"
+    },
+    "es": {
+      "language": "Español", "languageSelector": "Elegir idioma", "navigation": "Navegación principal", "skip": "Saltar al contenido",
+      "reservations": "Reservas las 24 horas", "chat": "Conversemos", "home": "Inicio", "tours": "Tours en Perú", "stories": "Testimonios", "contact": "Contacto",
+      "metaDescription": "Explora Machu Picchu, Cusco y Perú con una agencia de viajes local. Descubre tours a Machu Picchu y paquetes de varios días por el Perú.",
+      "heroGallery": "Destinos del Perú",
+      "previousPhoto": "Foto anterior",
+      "nextPhoto": "Siguiente foto",
+      "homeTitle": "Machu Picchu Travel Tours · Agencia de viajes, paquetes y entradas a Perú, Camino Inca y Cusco 2026- 2027",
+      "homeDescription": {
+        "lead": "Tours a Machu Picchu, Perú,",
+        "body": "paquetes turísticos de 1 a 30 días para visitar los mejores destinos. Mira miles de",
+        "reviews": "opiniones de Machu Picchu Travel",
+        "closing": ". Hemos atendido a más de 100,000 turistas. Tenemos disponibilidad de entradas para hacer el tour a Machu Picchu en febrero y durante todo el año 2026"
+      },
+      "tourTitle": "Top Tours - Paquetes turísticos a Perú",
+      "moreTours": "Ver todos los tours", "tourUnavailable": "Los tours no están disponibles temporalmente. Escríbenos para consultar itinerarios y disponibilidad.", "tourEmpty": "Los tours aparecerán aquí al publicarse.",
+      "testimonialsTitle": "Testimonios de nuestros pasajeros", "viewChannel": "Ver canal", "closeVideo": "Cerrar video", "watchVideo": "Mirar en YouTube", "playVideo": "Reproducir video",
+      "viewTour": "Ver tour",
+      "memberships": "Somos socios y miembros de", "awards": "Premios Tripadvisor",
+      "awardExcellence": "Certificado de Excelencia · Cinco años consecutivos", "awardTravelersChoice": "Travelers’ Choice · 2020–2026", "quality": "Premio a la calidad",
+      "footerDescription": "Agencia de viajes local con sede en Cusco, Perú.", "resources": "Explora Perú", "privacy": "Política de privacidad",
+      "back": "Volver a los tours", "catalogTitle": "Tours 2026", "overview": "Resumen", "itinerary": "Itinerario", "includes": "Qué incluye", "excludes": "Qué no incluye",
+      "rates": "Tarifas del tour", "pricePerPerson": "Precio por persona", "hotel": "Hoteles", "category": "Categoría", "single": "Simple", "double": "Doble", "triple": "Triple", "train": "Tren", "cost": "Costo",
+      "stars": "estrellas", "superior": "superior", "arrival": "Datos de llegada", "requirements": "Requisitos de reserva", "ask": "Consulta por este tour",
+      "contactTour": "Reserva o haz una consulta", "bookingMessage": "Hola, quisiera consultar por este tour:", "unavailableLanguage": "Ver tours en este idioma"
+    },
+    "pt": {
+      "language": "Português", "languageSelector": "Escolher idioma", "navigation": "Navegação principal", "skip": "Ir para o conteúdo",
+      "reservations": "Reservas 24 horas", "chat": "Vamos conversar", "home": "Início", "tours": "Passeios no Peru", "stories": "Depoimentos", "contact": "Contato",
+      "metaDescription": "Explore Machu Picchu, Cusco e o Peru com uma agência de viagens local. Descubra passeios a Machu Picchu e roteiros de vários dias pelo Peru.",
+      "heroGallery": "Destinos do Peru",
+      "previousPhoto": "Foto anterior",
+      "nextPhoto": "Próxima foto",
+      "homeTitle": "Machu Picchu Travel Tours · Agência de viagens, pacotes e ingressos no Peru, Trilha Inca e Cusco 2026- 2027",
+      "homeDescription": {
+        "lead": "Passeios a Machu Picchu, Peru,",
+        "body": "pacotes turísticos de 1 a 30 dias para visitar os melhores destinos. Veja milhares de",
+        "reviews": "avaliações da Machu Picchu Travel",
+        "closing": ". Atendemos mais de 100.000 turistas. Temos ingressos disponíveis para o passeio a Machu Picchu em fevereiro e durante todo o ano de 2026"
+      },
+      "tourTitle": "Top Tours - Pacotes turísticos para o Peru",
+      "moreTours": "Ver todos os passeios", "tourUnavailable": "Os passeios estão temporariamente indisponíveis. Fale conosco para consultar roteiros e disponibilidade.", "tourEmpty": "Os passeios aparecerão aqui quando forem publicados.",
+      "testimonialsTitle": "Depoimentos dos nossos passageiros", "viewChannel": "Ver canal", "closeVideo": "Fechar vídeo", "watchVideo": "Assistir no YouTube", "playVideo": "Reproduzir vídeo",
+      "viewTour": "Ver passeio",
+      "memberships": "Somos parceiros e membros de", "awards": "Prêmios Tripadvisor",
+      "awardExcellence": "Certificado de Excelência · Cinco anos consecutivos", "awardTravelersChoice": "Travelers’ Choice · 2020–2026", "quality": "Prêmio de qualidade",
+      "footerDescription": "Agência de viagens local com sede em Cusco, Peru.", "resources": "Explore o Peru", "privacy": "Política de privacidade",
+      "back": "Voltar aos passeios", "catalogTitle": "Passeios 2026", "overview": "Visão geral", "itinerary": "Roteiro", "includes": "O que está incluído", "excludes": "O que não está incluído",
+      "rates": "Preços do passeio", "pricePerPerson": "Preço por pessoa", "hotel": "Hotéis", "category": "Categoria", "single": "Individual", "double": "Duplo", "triple": "Triplo", "train": "Trem", "cost": "Custo",
+      "stars": "estrelas", "superior": "superior", "arrival": "Informações de chegada", "requirements": "Requisitos da reserva", "ask": "Pergunte sobre este passeio",
+      "contactTour": "Reserve ou tire suas dúvidas", "bookingMessage": "Olá, gostaria de saber mais sobre este passeio:", "unavailableLanguage": "Ver passeios neste idioma"
+    }
+  }
+}

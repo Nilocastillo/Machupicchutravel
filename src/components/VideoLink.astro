@@ -1,0 +1,68 @@
+---
+import { Image } from 'astro:assets';
+import { externalLink, travelImage, youtubeVideo } from '../lib/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  id: string;
+  image?: string;
+  title: string;
+  sizes?: string;
+  watchLabel?: string;
+  playLabel?: string;
+}
+
+const { id, image, title, sizes = '(min-width: 60rem) 25vw, 80vw', watchLabel, playLabel } = Astro.props;
+const thumbnail = image ? travelImage(image) : undefined;
+const youtubeThumbnail = `https://i.ytimg.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`;
+const imageStyle = 'aspect-video w-full bg-deep object-cover';
+const playPosition = 'absolute inset-0 m-auto grid place-items-center';
+const redPlay = 'z-10 h-[clamp(2.3rem,2.2rem+0.7vi,3rem)] w-[clamp(3.2rem,3rem+1.1vi,4.2rem)] rounded-[0.73rem] bg-youtube text-white';
+---
+<div class="group/video relative">
+  <a
+    href={youtubeVideo(id)}
+    {...externalLink}
+    class:list={['video-link group/link block min-w-0', watchLabel && 'video-preview rounded-[0.9rem] shadow-[0_0.25rem_1.05rem_#161a1417]']}
+    data-video-link={watchLabel ? true : undefined}
+    aria-label={watchLabel ? `${watchLabel} · ${title}` : undefined}
+  >
+    <span class:list={[
+      'video-media relative block',
+      watchLabel && 'rounded-[inherit] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:[background:linear-gradient(#141714c9,transparent_38%,transparent_62%,#1417146b)]',
+    ]}>
+      {thumbnail ? (
+        <Image src={thumbnail} class={`${imageStyle} ${watchLabel ? 'rounded-[0.9rem]' : 'rounded-[0.55rem]'}`}
+          alt="" layout="constrained" widths={[240, 360, 480]} {sizes} />
+      ) : (
+        <img src={youtubeThumbnail} class={`${imageStyle} ${watchLabel ? 'rounded-[0.9rem]' : 'rounded-[0.55rem]'}`}
+          alt="" width="480" height="360" loading="lazy" decoding="async" />
+      )}
+      {watchLabel && (
+        <span data-video-title class="video-name absolute inset-x-[0.9rem] top-[0.85rem] z-10 line-clamp-2
+          text-[clamp(0.9rem,0.8rem+0.45vi,1.2rem)] leading-tight font-[750] text-white text-shadow-[0_1px_4px_#141714]">{title}</span>
+      )}
+      <span class:list={[
+        'play-icon pointer-events-none group-data-[player-ready]/video:hidden',
+        playPosition,
+        watchLabel ? `${redPlay} group-hover/link:bg-youtube-hover` : 'size-[2.7rem] rounded-full bg-paper text-deep group-hover/link:bg-lime',
+      ]}><Icon name="play" size={watchLabel ? 28 : 19} /></span>
+      {watchLabel && (
+        <span class="video-watch absolute end-0 bottom-0 z-10 flex items-center gap-[0.4rem] rounded-ss-[0.55rem] rounded-ee-[0.85rem]
+          bg-[#141714d9] px-3 py-2 text-[0.8rem] leading-tight font-[750] text-white [&_svg]:shrink-0">
+          <Icon name="youtube" size={18} />{watchLabel}
+        </span>
+      )}
+    </span>
+    {!watchLabel && (
+      <span class="video-caption flex items-center justify-between gap-[0.55rem] pt-[0.55rem] text-[0.82rem] font-bold
+        underline-offset-[0.2em] group-hover/link:underline [&_svg]:shrink-0">{title}<Icon name="external" size={15} /></span>
+    )}
+  </a>
+  {watchLabel && playLabel && (
+    <button type="button" hidden data-video-id={id} aria-haspopup="dialog" aria-label={`${playLabel} · ${title}`}
+      class:list={['cursor-pointer hover:bg-youtube-hover', playPosition, redPlay]}>
+      <Icon name="play" size={28} />
+    </button>
+  )}
+</div>

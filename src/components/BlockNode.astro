@@ -1,0 +1,29 @@
+---
+import { mediaUrls, safeUrl, type Block } from '../lib/strapi';
+import { externalLinkAttributes } from '../lib/site';
+import InlineText from './InlineText.astro';
+
+interface Props { block: Block }
+const { block } = Astro.props;
+const children = block.children ?? [];
+const Heading = ({ 1: 'h3', 2: 'h3', 3: 'h4', 4: 'h5', 5: 'h6', 6: 'h6' } as const)[(block.level ?? 1) as 1 | 2 | 3 | 4 | 5 | 6] ?? 'h3';
+const List = block.format === 'ordered' ? 'ol' : 'ul';
+const href = block.type === 'link' ? safeUrl(block.url) : undefined;
+const media = block.type === 'image' ? mediaUrls(block.image) : undefined;
+const marks = ([
+  [block.bold, 'strong'], [block.italic, 'em'], [block.underline, 'u'],
+  [block.strikethrough, 's'], [block.code, 'code'],
+] as const).flatMap(([enabled, mark]) => enabled ? [mark] : []);
+---
+{
+  block.type === 'text' ? <InlineText text={block.text ?? ''} {marks} /> :
+  block.type === 'paragraph' ? <p>{children.map((child) => <Astro.self block={child} />)}</p> :
+  block.type === 'heading' ? <Heading class="leading-tight font-bold">{children.map((child) => <Astro.self block={child} />)}</Heading> :
+  block.type === 'list' ? <List class:list={['ps-[1.3em]', List === 'ol' ? 'list-decimal' : 'list-disc']}>{children.map((child) => <Astro.self block={child} />)}</List> :
+  block.type === 'list-item' ? <li>{children.map((child) => <Astro.self block={child} />)}</li> :
+  block.type === 'quote' ? <blockquote class="border-s-3 border-[#aab58d] ps-4">{children.map((child) => <Astro.self block={child} />)}</blockquote> :
+  block.type === 'code' ? <pre class="max-w-full overflow-auto"><code>{children.map((child) => child.text)}</code></pre> :
+  block.type === 'link' && href ? <a {href} {...externalLinkAttributes(href)} class="wrap-anywhere text-moss underline underline-offset-[0.16em]">{children.map((child) => <Astro.self block={child} />)}</a> :
+  media ? <img class="h-auto max-w-full rounded-[0.45rem]" src={media.src} srcset={media.srcset} sizes={media.srcset ? '(min-width: 65rem) 65ch, 90vw' : undefined} width={media.width} height={media.height} alt={media.alt ?? ''} loading="lazy" decoding="async" /> :
+  children.map((child) => <Astro.self block={child} />)
+}

@@ -1,0 +1,8 @@
+---
+import type { Block } from '../lib/strapi';
+import BlockNode from './BlockNode.astro';
+
+interface Props { blocks?: Block[] | null }
+const { blocks } = Astro.props;
+---
+<div class="blocks space-y-[0.72em]">{blocks?.map((block) => <BlockNode {block} />)}</div>

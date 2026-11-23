@@ -1,0 +1,33 @@
+---
+import site from '../data/site.json';
+import { tourPath } from '../lib/site';
+import { tourTitle, type Tour } from '../lib/strapi';
+import Icon from './Icon.astro';
+import TourPhoto from './TourPhoto.astro';
+
+interface Props { tour: Tour }
+
+const { tour } = Astro.props;
+const copy = site.copy[tour.locale];
+const title = tourTitle(tour);
+const titleId = `tour-title-${tour.documentId}`;
+const actionId = `tour-action-${tour.documentId}`;
+---
+<a href={tourPath(tour.locale, tour.slug)} class="tour-link group grid min-w-0 rounded-[0.9rem]" aria-labelledby={`${actionId} ${titleId}`}>
+  <article class="tour-card flex min-w-0 flex-col rounded-[inherit] border border-[#e6e7df] bg-white
+      shadow-[0_0.25rem_1.05rem_#242a1c0a] [--card-inset:clamp(0.8rem,1.3vi,1.15rem)] group-hover:border-[#aab58d]">
+    <div class="tour-cover relative rounded-t-[0.85rem] [&:not(:has(>img))]:hidden
+        after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:[background:linear-gradient(transparent_42%,#10160e65)]
+        [&>img]:block [&>img]:aspect-[4/3] [&>img]:w-full [&>img]:rounded-[inherit] [&>img]:bg-mist [&>img]:object-cover">
+      <TourPhoto
+        {tour}
+        sizes="(min-width: 90rem) 305px, (min-width: 74rem) 22vw, (min-width: 64rem) 30vw, (min-width: 34rem) 46vw, 92vw"
+      />
+    </div>
+    <h3 id={titleId} class="mx-(--card-inset) mt-(--card-inset) mb-[0.85rem] text-[clamp(1rem,0.9rem+0.3vi,1.18rem)]
+      leading-[1.24] font-extrabold tracking-[-0.025em] text-pretty wrap-anywhere text-[#242720]">{title}</h3>
+    <footer class="tour-footer mx-(--card-inset) mt-auto flex min-h-[2.9rem] items-center justify-end border-t border-[#ebece5]">
+      <span id={actionId} class="tour-action inline-flex items-center gap-[0.3rem] text-[0.82rem] font-extrabold text-moss underline-offset-[0.2em] group-hover:underline [&_svg]:shrink-0">{copy.viewTour}<Icon name="arrow" size={16} /></span>
+    </footer>
+  </article>
+</a>

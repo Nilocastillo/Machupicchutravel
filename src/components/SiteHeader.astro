@@ -1,0 +1,114 @@
+---
+import site from '../data/site.json';
+import { externalLink, homePath, locales, type Locale } from '../lib/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  locale: Locale;
+  alternatives: Partial<Record<Locale, string>>;
+}
+
+const { locale, alternatives } = Astro.props;
+const copy = site.copy[locale];
+const home = homePath(locale);
+const flags: Record<Locale, string> = { en: 'us', es: 'pe', pt: 'br' };
+---
+<header>
+  <div class="contact-band bg-forest text-paper">
+    <div class="shell contact-row grid min-h-18 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 py-[0.55rem]
+      min-[37rem]:min-h-22 min-[37rem]:grid-cols-[auto_minmax(0,1fr)_auto] min-[45rem]:gap-x-[clamp(1rem,2.4vi,2rem)]
+      min-[78rem]:grid-cols-[1fr_auto_1fr]">
+      <a class="brand w-fit" href={home}>
+        <img class="h-auto w-[4.8rem] min-[37rem]:w-[6.2rem]" src="/logo-machupicchu-travel.webp" alt={site.brand} width="873" height="641" />
+      </a>
+      <div class="contacts hidden min-w-0 items-center gap-[clamp(1rem,2.7vi,2.5rem)] justify-self-center min-[37rem]:flex">
+        <div class="reservations flex items-center gap-[0.8rem]">
+          <span class="contact-icon hidden aspect-square w-[2.45rem] shrink-0 place-items-center rounded-full bg-[#3f4a2c] text-[#f2cd70] min-[45rem]:grid"><Icon name="headset" size={19} /></span>
+          <div>
+            <p class="reservation-label text-[0.66rem] font-extrabold tracking-[0.12em] text-[#f2cd70] uppercase">{copy.reservations}</p>
+            <ul class="phones flex flex-wrap gap-x-[0.55rem] text-[0.94rem] font-bold
+              [&_a:hover]:underline [&_li]:whitespace-nowrap min-[45rem]:[&_li+li]:before:pe-[0.55rem]
+              min-[45rem]:[&_li+li]:before:text-[#cccea9] min-[45rem]:[&_li+li]:before:content-['·']" role="list">
+              {site.contact.phones.map(({ label, number }) => <li><a href={`tel:${number}`}>{label}</a></li>)}
+            </ul>
+          </div>
+        </div>
+        <a class="email text-link hidden shrink-0 border-s border-[#596145] ps-[clamp(1rem,2.7vi,2.5rem)] text-[0.84rem] font-medium min-[59rem]:inline-flex [&_svg]:text-[#f2cd70]" href={`mailto:${site.contact.emails[0]}`}>
+          <Icon name="mail" size={18} />{site.contact.emails[0]}
+        </a>
+      </div>
+      <div class="flex items-center gap-2 justify-self-end min-[37rem]:gap-3">
+        <a class="action action-whatsapp chat gap-2 rounded-full px-3 whitespace-nowrap min-[54rem]:px-4" href={site.contact.whatsapp} {...externalLink}>
+          <Icon name="whatsapp" size={19} />
+          {copy.chat}
+          <Icon name="external" class="chat-arrow hidden min-[60rem]:inline" size={15} />
+        </a>
+        <details class="group relative" data-language-picker>
+          <summary aria-label={`${copy.languageSelector} · ${copy.language}`}
+            class="flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full border border-paper/30 px-2 text-xs leading-none font-bold
+              hover:bg-paper/10 group-open:bg-paper/10 focus-visible:outline-paper [&::-webkit-details-marker]:hidden">
+            <img src={`/flags/${flags[locale]}.png`} width="24" height="18" alt="" class="shrink-0 rounded-[0.15rem]" />
+            <span class="hidden min-[24rem]:inline">{locale.toUpperCase()}</span>
+            <Icon name="chevron" size={15} class="shrink-0 group-open:rotate-180" />
+          </summary>
+          <nav aria-label={copy.languageSelector}
+            class="absolute end-0 top-full z-20 mt-2 w-42 rounded-xl border border-line bg-paper p-1.5 text-ink shadow-[0_0.5rem_1.5rem_#232b1840]">
+            <ul role="list">
+              {locales.map((language) => (
+                <li>
+                  <a
+                    href={alternatives[language] ?? `${homePath(language)}#tours`}
+                    class="flex min-h-11 items-center gap-2.5 rounded-lg px-2.5 text-sm font-semibold hover:bg-mist
+                      focus-visible:-outline-offset-2 aria-[current=page]:bg-mist"
+                    hreflang={language}
+                    lang={language}
+                    aria-label={alternatives[language] ? undefined : `${site.copy[language].language} · ${site.copy[language].unavailableLanguage}`}
+                    aria-current={language === locale ? 'page' : undefined}
+                  >
+                    <img src={`/flags/${flags[language]}.png`} width="24" height="18" alt="" class="shrink-0 rounded-[0.15rem]" />
+                    {site.copy[language].language}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-band border-b border-line">
+    <div class="shell nav-row flex flex-wrap items-center justify-between gap-x-2 min-[37rem]:flex-nowrap min-[37rem]:gap-x-6">
+      <nav aria-label={copy.navigation}>
+        <ul class="nav-links flex flex-wrap items-center gap-x-[clamp(0.75rem,2.2vi,2rem)] text-[0.78rem] font-[650] min-[37rem]:text-[0.86rem]
+          [&_a]:inline-flex [&_a]:min-h-[2.95rem] [&_a]:items-center [&_a]:underline-offset-[0.25em] [&_a:hover]:text-moss [&_a:hover]:underline" role="list">
+          <li class="home-link hidden min-[37rem]:list-item"><a href={home}>{copy.home}</a></li>
+          <li><a href={`${home}#tours`}>{copy.tours}</a></li>
+          <li><a href={`${home}#stories`}>{copy.stories}</a></li>
+          <li><a href="#contact">{copy.contact}</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  const selector = document.querySelector<HTMLDetailsElement>('[data-language-picker]');
+
+  if (selector) {
+    document.addEventListener('click', (event) => {
+      if (selector.open && event.target instanceof Node && !selector.contains(event.target)) selector.open = false;
+    });
+
+    selector.addEventListener('focusout', (event) => {
+      if (event.relatedTarget instanceof Node && !selector.contains(event.relatedTarget)) selector.open = false;
+    });
+
+    selector.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !selector.open) return;
+      event.preventDefault();
+      selector.open = false;
+      selector.querySelector('summary')?.focus();
+    });
+  }
+</script>

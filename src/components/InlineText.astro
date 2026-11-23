@@ -1,0 +1,10 @@
+---
+interface Props {
+  text: string;
+  marks: ('strong' | 'em' | 'u' | 's' | 'code')[];
+}
+
+const { text, marks } = Astro.props;
+const [Mark, ...rest] = marks;
+---
+{Mark ? <Mark><Astro.self {text} marks={rest} /></Mark> : text}

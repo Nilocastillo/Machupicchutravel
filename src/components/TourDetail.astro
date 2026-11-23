@@ -1,0 +1,136 @@
+---
+import { getImage, Image } from 'astro:assets';
+import site from '../data/site.json';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { externalLink, externalLinkAttributes, featured, homePath, tourPath, travelImage, type Locale } from '../lib/site';
+import { blockText, hasContent, mediaUrls, safeUrl, tourTitle, type Tour, type TourInformation } from '../lib/strapi';
+import Blocks from './Blocks.astro';
+import Icon from './Icon.astro';
+import RecommendationVideos from './RecommendationVideos.astro';
+import TourRates from './TourRates.astro';
+
+interface Props {
+  tour: Tour;
+  catalog: Tour[];
+  alternatives: Partial<Record<Locale, string>>;
+  information: TourInformation | null;
+}
+
+const { tour, catalog, alternatives, information } = Astro.props;
+const locale = tour.locale;
+const copy = site.copy[locale];
+const booking = new URL(site.contact.whatsapp);
+booking.searchParams.set('text', `${copy.bookingMessage} ${tour.titulo}`);
+const metaTitle = tour.seo?.metaTitulo?.trim() || `${tour.titulo} | ${site.brand}`;
+const descriptionText = blockText(tour.descripcion) || blockText(tour.resumen?.[0]?.contenido);
+const metaDescription = tour.seo?.metaDescripcion?.trim() || descriptionText.slice(0, 160).trim() || tour.titulo;
+const fallback = featured.get(tour.documentId)?.image;
+const imageFromCms = mediaUrls(tour.imagen);
+const editorialImage = fallback ? travelImage(fallback) : undefined;
+const social = mediaUrls(tour.seo?.metaImagen)?.src || imageFromCms?.src ||
+  (editorialImage && (await getImage({ src: editorialImage, format: 'webp' })).src);
+const overview = tour.resumen?.filter(({ contenido }) => hasContent(contenido)) ?? [];
+const itinerary = tour.itinerario?.filter(({ contenido }) => hasContent(contenido)) ?? [];
+const hero = site.hero.find(({ image }) => image === 'machu-picchu-panorama') ?? site.hero[0];
+const dayTitle = 'rounded-[0.35rem] bg-forest px-4 py-[0.65rem] text-base leading-snug font-bold text-paper';
+const dayContent = 'px-4 py-3 leading-relaxed [&_li+li]:mt-1';
+---
+<SiteLayout {locale} {alternatives} title={metaTitle} description={metaDescription} socialImage={social}>
+  <div class="mx-auto w-full max-w-(--site-width) px-[clamp(0.75rem,1.4vi,1.25rem)]">
+    <Image
+      class="h-[clamp(10rem,27vi,23rem)] w-full max-w-none bg-forest object-cover object-center"
+      src={travelImage(hero.image)}
+      alt={hero.alt[locale]}
+      layout="constrained"
+      widths={[480, 720, 960, 1200]}
+      sizes="(min-width: 90rem) 1400px, 100vw"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
+
+  <div class="shell pt-[0.75rem] pb-[clamp(3rem,6vi,5rem)]">
+    <a class="text-link mb-2 text-black" href={`${homePath(locale)}#tours`}><Icon name="back" size={17} />{copy.back}</a>
+    <div class="grid items-start gap-x-6 gap-y-6 min-[62rem]:grid-cols-[minmax(0,1fr)_minmax(17rem,25%)]">
+      <article class="min-w-0 text-black [&_.blocks_a]:text-black" aria-labelledby="tour-title">
+        <h1 id="tour-title" class="section-title m-0 mb-4 text-[clamp(2rem,1.35rem+2vi,3.65rem)] leading-[1.06] wrap-anywhere">{tour.titulo}</h1>
+        {hasContent(tour.descripcion) && <div class="mb-4 text-[1.07rem]"><Blocks blocks={tour.descripcion} /></div>}
+        <a class="action action-whatsapp" href={booking.href} {...externalLink}><Icon name="whatsapp" size={19} />{copy.ask}</a>
+
+        <div class="detail-body mt-[clamp(1.75rem,3.5vi,3rem)] grid gap-[clamp(1.75rem,3.5vi,3rem)]
+          [&>section]:min-w-0 [&>section>h2]:mt-0 [&>section>h2]:mb-[0.9rem] [&>section>h2]:text-[clamp(1.65rem,1.2rem+1.4vi,2.7rem)] [&>section>h2]:text-wrap">
+          {overview.length > 0 && (
+            <section aria-labelledby="overview-title">
+              <h2 id="overview-title" class="section-title">{copy.overview}</h2>
+              <div class="grid gap-3">
+                {overview.map(({ titulo, contenido }) => (
+                  <div>
+                    <h3 class={dayTitle}>{titulo}</h3>
+                    <div class={dayContent}><Blocks blocks={contenido} /></div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+          {itinerary.length > 0 && (
+            <section aria-labelledby="itinerary-title">
+              <h2 id="itinerary-title" class="section-title">{copy.itinerary}</h2>
+              <div class="grid gap-4">
+                {itinerary.map(({ titulo, contenido }) => (
+                  <div>
+                    <h3 class={dayTitle}>{titulo}</h3>
+                    <div class={dayContent}><Blocks blocks={contenido} /></div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+          {hasContent(tour.incluye) && <section><h2 class="section-title">{copy.includes}</h2><Blocks blocks={tour.incluye} /></section>}
+          {hasContent(tour.noIncluye) && <section><h2 class="section-title">{copy.excludes}</h2><Blocks blocks={tour.noIncluye} /></section>}
+          <TourRates {tour} />
+          {hasContent(information?.datosLlegada) && <section><h2 class="section-title">{copy.arrival}</h2><Blocks blocks={information?.datosLlegada} /></section>}
+          {hasContent(information?.requisitosReserva) && <section><h2 class="section-title">{copy.requirements}</h2><Blocks blocks={information?.requisitosReserva} /></section>}
+          {information?.reservasConsultas?.length ? (
+            <section class="tour-contacts rounded-[0.55rem] bg-mist p-[1.3rem]
+              [&_a]:wrap-anywhere [&_a]:underline [&_a]:underline-offset-[0.2em]">
+              <h2 class="section-title">{copy.contactTour}</h2>
+              <ul role="list">
+                {information.reservasConsultas.map(({ email, movil, enlaceMovil }) => {
+                  const mobileLink = safeUrl(enlaceMovil) ?? `tel:${movil.replace(/[^+\d]/g, '')}`;
+                  return (
+                    <li class="flex flex-wrap gap-x-4 gap-y-[0.35rem] py-1">
+                      <a href={`mailto:${email}`}>{email}</a>
+                      <a href={mobileLink} {...externalLinkAttributes(mobileLink)}>{movil}</a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ) : null}
+        </div>
+      </article>
+
+      <div class="grid min-w-0 gap-8 text-black [&_.video-content]:mt-3">
+        <aside aria-labelledby="tour-catalog-title" class="rounded-[0.55rem] border border-line">
+          <h2 id="tour-catalog-title" class="rounded-t-[0.5rem] bg-forest px-4 py-[0.7rem] text-xl font-bold text-paper">{copy.catalogTitle}</h2>
+          <ul class="divide-y divide-line" role="list">
+            {catalog.map((entry) => (
+              <li>
+                <a
+                  href={tourPath(locale, entry.slug)}
+                  aria-current={entry.slug === tour.slug ? 'page' : undefined}
+                  class="flex min-h-11 items-center justify-between gap-3 px-4 py-2 text-[0.92rem] leading-snug font-[650] wrap-anywhere
+                    hover:bg-mist hover:underline focus-visible:-outline-offset-2 aria-[current=page]:bg-mist [&_svg]:shrink-0"
+                >
+                  {tourTitle(entry)}
+                  <Icon name="arrow" size={16} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+        <RecommendationVideos {locale} source="testimonials" thumbnailSizes="(min-width: 90rem) 325px, (min-width: 62rem) 26vw, (min-width: 42rem) 30vw, 92vw" />
+      </div>
+    </div>
+  </div>
+</SiteLayout>

@@ -1,0 +1,7 @@
+---
+import TourDetail from '../../../components/TourDetail.astro';
+import { localizedTourPaths } from '../../../lib/strapi';
+
+export const getStaticPaths = localizedTourPaths;
+---
+<TourDetail {...Astro.props} />
