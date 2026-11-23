@@ -37,7 +37,7 @@ Deja Strapi abierto con `npm run develop` desde `backend`. En otra terminal, des
 | --- | --- |
 | `STRAPI_URL` | Por defecto `http://127.0.0.1:1337`. Usa la dirección y el puerto donde corre tu Strapi local. |
 | `STRAPI_READ_TOKEN` | Token opcional si la API requiere autenticación. Dale acceso de lectura a Tours, Tarifarios e Información general de tours. |
-| `SITE_URL` | URL HTTPS pública del frontend, en el dominio final o en `machupicchu-travel.<tu-subdominio>.workers.dev`. |
+| `SITE_URL` | URL HTTPS pública del frontend. El Worker actual está en `https://machupicchutravel.nilocastillloumeres.workers.dev`. |
 
 ```sh
 bun install --frozen-lockfile
@@ -45,17 +45,17 @@ bun run wrangler login # Primera vez
 bun run deploy
 ```
 
-`bun run deploy` compila los tours y las tarifas a partir del contenido publicado en Strapi. También copia a `dist/cms-media/` los archivos de `/uploads/` referenciados por ese contenido cuando Strapi corre en `localhost`, `127.0.0.1` o `::1`. Wrangler sube el HTML y esos archivos a `machupicchu-travel`. Puedes cerrar Strapi al terminar y volver a ejecutar el despliegue cuando cambie el contenido.
+`bun run deploy` compila los tours y las tarifas a partir del contenido publicado en Strapi. También copia a `dist/cms-media/` los archivos de `/uploads/` referenciados por ese contenido cuando Strapi corre en `localhost`, `127.0.0.1` o `::1`. Wrangler sube el HTML y esos archivos a `machupicchutravel`. Puedes cerrar Strapi al terminar y volver a ejecutar el despliegue cuando cambie el contenido.
 
 Para probar el resultado antes de publicarlo, ejecuta `bun run build:workers` y luego `bun run preview:workers`. Si falla la lectura del catálogo o la descarga de un archivo local, el build de despliegue se detiene.
 
 ### Desde Git con Workers Builds
 
-Este flujo requiere una instancia de Strapi accesible desde Cloudflare y URLs públicas para sus medios. Cuando la tengas, importa el repositorio en **Workers & Pages** y configura el proyecto con estos valores.
+Este flujo requiere una instancia de Strapi accesible desde Cloudflare y URLs públicas para sus medios. Mientras uses Strapi local, publica desde tu máquina. Si un push activa Workers Builds con `STRAPI_URL` apuntando a localhost, el build se detiene para proteger el catálogo publicado. Cuando tengas Strapi accesible desde Cloudflare, importa el repositorio en **Workers & Pages** y configura el proyecto con estos valores.
 
 | Opción | Valor |
 | --- | --- |
-| Worker name | `machupicchu-travel` |
+| Worker name | `machupicchutravel` |
 | Production branch | `main` |
 | Root directory | `/` |
 | Build command | `bun run build:workers` |

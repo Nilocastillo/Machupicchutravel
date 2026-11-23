@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "machupicchu-travel",
+  "name": "machupicchutravel",
   "compatibility_date": "2026-11-22",
   "assets": {
     "directory": "./dist",

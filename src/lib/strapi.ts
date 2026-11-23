@@ -3,6 +3,7 @@ import { defaultLocale, localizedLocales, locales, tourPath, type Locale } from 
 const strapiUrl = import.meta.env.STRAPI_URL || 'http://127.0.0.1:1337';
 const token = import.meta.env.STRAPI_READ_TOKEN;
 const published = { status: 'published' };
+const onWorkersBuild = import.meta.env.WORKERS_CI === '1';
 const loopbackHosts = new Set(['localhost', '127.0.0.1', '[::1]']);
 const strapiBase = URL.canParse(strapiUrl) ? new URL(strapiUrl) : undefined;
 const localStrapi = import.meta.env.PROD && strapiBase && loopbackHosts.has(strapiBase.hostname)
@@ -94,6 +95,9 @@ const catalog = new Map<Locale, ReturnType<typeof fetchTours>>();
 const information = new Map<Locale, Promise<TourInformation | null>>();
 
 async function fetchTours(locale: Locale) {
+  if (onWorkersBuild && localStrapi) {
+    throw new Error('Workers Builds no puede acceder a Strapi en localhost. Ejecuta bun run deploy en tu máquina con Strapi encendido.');
+  }
   try {
     const tours: Tour[] = [];
     let pageCount = 1;
@@ -107,7 +111,7 @@ async function fetchTours(locale: Locale) {
     }
     return { tours, unavailable: false };
   } catch (error) {
-    if (import.meta.env.STRAPI_REQUIRED === '1') {
+    if (import.meta.env.STRAPI_REQUIRED === '1' || onWorkersBuild) {
       throw new Error(`No se pudo cargar el catálogo de Strapi (${locale}).`, { cause: error });
     }
     console.warn(`No se pudo cargar el catálogo de Strapi (${locale}).`, error);
