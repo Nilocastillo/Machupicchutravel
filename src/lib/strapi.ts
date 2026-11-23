@@ -3,6 +3,11 @@ import { defaultLocale, localizedLocales, locales, tourPath, type Locale } from 
 const strapiUrl = import.meta.env.STRAPI_URL || 'http://127.0.0.1:1337';
 const token = import.meta.env.STRAPI_READ_TOKEN;
 const published = { status: 'published' };
+const loopbackHosts = new Set(['localhost', '127.0.0.1', '[::1]']);
+const strapiBase = URL.canParse(strapiUrl) ? new URL(strapiUrl) : undefined;
+const localStrapi = import.meta.env.PROD && strapiBase && loopbackHosts.has(strapiBase.hostname)
+  ? strapiBase
+  : undefined;
 
 interface Media {
   url: string;
@@ -132,9 +137,44 @@ function getTourInformation(locale: Locale) {
   return result;
 }
 
+function localUploadFilename(value: string) {
+  if (!localStrapi || !URL.canParse(value, localStrapi)) return undefined;
+  const url = new URL(value, localStrapi);
+  if (!loopbackHosts.has(url.hostname) || url.protocol !== localStrapi.protocol || url.port !== localStrapi.port) {
+    return undefined;
+  }
+  return /^\/uploads\/([\w-][\w.-]*\.[\w-]+)$/.exec(url.pathname)?.[1];
+}
+
+export async function localUploadPaths() {
+  if (!localStrapi) return [];
+  const filenames = new Set<string>();
+
+  function collect(value: unknown) {
+    if (!value || typeof value !== 'object') return;
+    for (const [key, child] of Object.entries(value)) {
+      if ((key === 'url' || key === 'enlaceMovil') && typeof child === 'string') {
+        const filename = localUploadFilename(child.trim());
+        if (filename) filenames.add(filename);
+      } else {
+        collect(child);
+      }
+    }
+  }
+
+  const content = await Promise.all(locales.flatMap((locale) => [getTours(locale), getTourInformation(locale)]));
+  collect(content);
+  return Array.from(filenames, (filename) => ({
+    params: { filename },
+    props: { source: new URL(`/uploads/${filename}`, localStrapi).href },
+  }));
+}
+
 export function safeUrl(value?: string | null, kind: 'link' | 'image' = 'link') {
   const raw = value?.trim();
   if (!raw) return undefined;
+  const filename = localUploadFilename(raw);
+  if (filename) return `/cms-media/${filename}`;
   try {
     const url = new URL(raw, kind === 'image' ? strapiUrl : 'https://example.invalid/');
     const protocols = kind === 'image' ? ['https:', 'http:'] : ['https:', 'http:', 'mailto:', 'tel:', 'sms:'];

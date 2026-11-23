@@ -24,32 +24,34 @@ Astro consulta por defecto `http://127.0.0.1:1337`. Si usas otra instancia, copi
 - Tours, tarifas e información de las fichas se leen de Strapi con `status=published` y el idioma explícito. Los textos de la portada, contacto global, videos, enlaces y orden de destacados se editan en `src/data/site.json`.
 - Las fotos locales de la web anterior respaldan a los destacados sin portada en Strapi. Si se carga una portada en Strapi, tiene prioridad.
 - La portada toma los tres videos más recientes del RSS de YouTube al compilarse. El canal se configura con `youtubeChannelId` en `src/data/site.json`. Los tres videos de `testimonials` sirven de respaldo si el RSS no está disponible.
-- Configura `SITE_URL` con el dominio público para generar enlaces canónicos y alternativos por idioma. En producción, `STRAPI_URL` debe apuntar a una instancia con medios accesibles para el visitante, o a una instancia que devuelva URLs públicas para esos medios.
+- Configura `SITE_URL` con el dominio público para generar enlaces canónicos y alternativos por idioma.
 - Ejecuta `bun run astro check` para validar tipos y `bun run build` para generar `dist/` con Strapi disponible. Regenera el sitio al publicar tours o cambiar precios. Si Strapi está fuera de servicio, Astro registra la incidencia y la portada muestra un aviso donde iría el catálogo.
 
 ## Despliegue en Cloudflare Workers
 
-El Worker `machupicchu-travel` sirve los archivos estáticos de `dist/`. Astro consulta Strapi durante el build. Si el catálogo de algún idioma falla, `bun run build:workers` detiene el despliegue para conservar las fichas publicadas.
+### Desde tu máquina con Strapi local
+
+Deja Strapi abierto con `npm run develop` desde `backend`. En otra terminal, desde `frontend`, instala las dependencias con Node.js 22.23.4 o posterior y Bun. Define las variables en tu entorno o en `.env` usando `.env.example` como referencia.
 
 | Variable de compilación | Valor |
 | --- | --- |
-| `STRAPI_URL` | URL de Strapi accesible desde la máquina que ejecuta el build. Para Workers Builds, usa la URL HTTPS de tu instancia publicada. |
-| `STRAPI_READ_TOKEN` | Secreto de compilación si la API requiere autenticación. Dale acceso de lectura a Tours, Tarifarios e Información general de tours. |
+| `STRAPI_URL` | Por defecto `http://127.0.0.1:1337`. Usa la dirección y el puerto donde corre tu Strapi local. |
+| `STRAPI_READ_TOKEN` | Token opcional si la API requiere autenticación. Dale acceso de lectura a Tours, Tarifarios e Información general de tours. |
 | `SITE_URL` | URL HTTPS pública del frontend, en el dominio final o en `machupicchu-travel.<tu-subdominio>.workers.dev`. |
-
-### Desde tu máquina
-
-Con Node.js 22.23.4 o posterior y Bun, instala las dependencias. Define las variables en tu entorno o copia `.env.example` a `.env` y completa los valores. Para probar el resultado con el runtime de Workers, ejecuta `bun run build:workers` y luego `bun run preview:workers`.
 
 ```sh
 bun install --frozen-lockfile
-bun run wrangler login
+bun run wrangler login # Primera vez
 bun run deploy
 ```
 
+`bun run deploy` compila los tours y las tarifas a partir del contenido publicado en Strapi. También copia a `dist/cms-media/` los archivos de `/uploads/` referenciados por ese contenido cuando Strapi corre en `localhost`, `127.0.0.1` o `::1`. Wrangler sube el HTML y esos archivos a `machupicchu-travel`. Puedes cerrar Strapi al terminar y volver a ejecutar el despliegue cuando cambie el contenido.
+
+Para probar el resultado antes de publicarlo, ejecuta `bun run build:workers` y luego `bun run preview:workers`. Si falla la lectura del catálogo o la descarga de un archivo local, el build de despliegue se detiene.
+
 ### Desde Git con Workers Builds
 
-Importa el repositorio en **Workers & Pages** y configura el proyecto con estos valores.
+Este flujo requiere una instancia de Strapi accesible desde Cloudflare y URLs públicas para sus medios. Cuando la tengas, importa el repositorio en **Workers & Pages** y configura el proyecto con estos valores.
 
 | Opción | Valor |
 | --- | --- |
